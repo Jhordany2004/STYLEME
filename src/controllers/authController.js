@@ -3,7 +3,7 @@ const authService = require('../services/authService');
 const { success } = require('../compartido/response');
 const Usuario = require('../models/Usuario');
 
-const registerSchema = z.object({ nombreCompleto: z.string().min(3).max(100), email: z.string().email(), password: z.string().min(8).max(100), telefono: z.string().max(30).optional() });
+const registerSchema = z.object({ nombreCompleto: z.string().min(3).max(100), email: z.string().email(), password: z.string().min(8).max(100), telefono: z.string().max(30).optional(), apellidos: z.string().max(100).optional(), edad: z.number().int().min(18).max(120).optional(), documento: z.string().max(30).optional(), direccion: z.string().max(250).optional(), rol: z.enum(['CLIENTE', 'VENDEDOR']).default('CLIENTE') });
 const loginSchema = z.object({ email: z.string().email(), password: z.string().min(1) });
 
 async function register(req, res, next) { try { const user = await authService.register(registerSchema.parse(req.body)); return success(res, user, 'Usuario registrado', 201); } catch (error) { return next(error); } }

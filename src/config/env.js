@@ -1,4 +1,7 @@
-require('dotenv').config();
+const fs = require('fs');
+
+// En desarrollo admite la plantilla indicada si aún no existe un .env local.
+require('dotenv').config({ path: fs.existsSync('.env') ? '.env' : '.env.example' });
 
 const required = [
   'MONGODB_URI',

@@ -16,6 +16,10 @@ const usuarioSchema = new Schema({
   correoNormalizado: { type: String, required: true, unique: true, lowercase: true, trim: true },
   hashContrasena: { type: String, required: true, select: false },
   telefono: String,
+  apellidos: { type: String, trim: true },
+  edad: Number,
+  documento: { type: String, trim: true },
+  direccion: { type: String, trim: true },
   roles: { type: [String], enum: ['CLIENTE', 'VENDEDOR', 'ADMINISTRADOR'], default: ['CLIENTE'] },
   estado: { type: String, enum: ['ACTIVO', 'BLOQUEADO'], default: 'ACTIVO' },
   direcciones: { type: [direccionSchema], default: [] }

@@ -6,6 +6,7 @@ const carrito = require('../controllers/carritoController');
 const pedidos = require('../controllers/pedidoController');
 const chats = require('../controllers/chatController');
 const perfilEstilo = require('../controllers/perfilEstiloController');
+const usuarios = require('../controllers/usuarioController');
 const Categoria = require('../models/Categoria');
 const { success } = require('../compartido/response');
 const { authenticate, authorize } = require('../compartido/middlewares/auth');
@@ -13,6 +14,7 @@ const { authenticate, authorize } = require('../compartido/middlewares/auth');
 router.post('/autenticacion/registrar', auth.register);
 router.post('/autenticacion/iniciar-sesion', auth.login);
 router.get('/usuarios/mi-perfil', authenticate, auth.profile);
+router.get('/usuarios', authenticate, usuarios.listarParaChat);
 
 router.get('/tiendas', tiendas.listPublic);
 router.post('/tiendas', authenticate, authorize('CLIENTE'), tiendas.create);

@@ -12,7 +12,7 @@ const {
 } = require('../config/env');
 
 function publicUser(user) {
-  return { id: user._id, nombreCompleto: user.nombreCompleto, email: user.correoNormalizado, telefono: user.telefono, roles: user.roles, estado: user.estado, direcciones: user.direcciones };
+  return { id: user._id, nombreCompleto: user.nombreCompleto, email: user.correoNormalizado, telefono: user.telefono, apellidos: user.apellidos, edad: user.edad, documento: user.documento, direccion: user.direccion, roles: user.roles, estado: user.estado, direcciones: user.direcciones };
 }
 
 function createAccessToken(user) {
@@ -35,7 +35,7 @@ async function register(data) {
   const email = data.email.toLowerCase().trim();
   if (await Usuario.exists({ correoNormalizado: email })) throw new AppError(409, 'El correo ya está registrado');
   const hashContrasena = await argon2.hash(data.password, { type: argon2.argon2id });
-  const user = await Usuario.create({ nombreCompleto: data.nombreCompleto, correoNormalizado: email, hashContrasena, telefono: data.telefono });
+  const user = await Usuario.create({ nombreCompleto: data.nombreCompleto, correoNormalizado: email, hashContrasena, telefono: data.telefono, apellidos: data.apellidos, edad: data.edad, documento: data.documento, direccion: data.direccion, roles: [data.rol] });
   return publicUser(user);
 }
 
