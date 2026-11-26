@@ -35,8 +35,8 @@ router.post('/pedidos/confirmar-compra', authenticate, authorize('CLIENTE'), ped
 router.get('/pedidos', authenticate, authorize('CLIENTE'), pedidos.list);
 
 // Disponible para clientes, vendedores y administradores autenticados.
-router.post('/chats/mensajes', authenticate, chats.enviar);
-router.get('/chats/conversaciones/:idUsuario/mensajes', authenticate, chats.obtenerConversacion);
+router.get('/chats/global/mensajes', authenticate, chats.obtenerGlobal);
+router.post('/chats/global/mensajes', authenticate, chats.enviarGlobal);
 router.post('/test-estilo/analizar', authenticate, perfilEstilo.analizar);
 
 module.exports = router;

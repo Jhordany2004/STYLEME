@@ -2,38 +2,24 @@ const MensajeChat = require('../models/MensajeChat');
 const Usuario = require('../models/Usuario');
 const { AppError } = require('../compartido/errors/AppError');
 
-async function enviar(idAutor, { destinatarioId, mensaje }) {
-  if (idAutor === destinatarioId) {
-    throw new AppError(400, 'No puedes enviarte mensajes a ti mismo');
-  }
-
-  const [autor, destinatario] = await Promise.all([
-    Usuario.findOne({ _id: idAutor, estado: 'ACTIVO' }),
-    Usuario.findOne({ _id: destinatarioId, estado: 'ACTIVO' })
-  ]);
-  if (!autor) throw new AppError(401, 'Usuario no válido');
-  if (!destinatario) throw new AppError(404, 'Destinatario no encontrado');
+async function enviarGlobal(idAutor, { mensaje }) {
+  const autor = await Usuario.findOne({ _id: idAutor, estado: 'ACTIVO' });
+  if (!autor) throw new AppError(401, 'Usuario no valido');
 
   return MensajeChat.create({
     autor: autor._id,
     nombreAutor: autor.nombreCompleto,
-    destinatario: destinatario._id,
     mensaje
   });
 }
 
-async function conversacion(idUsuario, idOtroUsuario) {
-  const otroUsuario = await Usuario.findById(idOtroUsuario).select('_id nombreCompleto estado');
-  if (!otroUsuario || otroUsuario.estado !== 'ACTIVO') {
-    throw new AppError(404, 'Usuario no encontrado');
-  }
-
-  return MensajeChat.find({
-    $or: [
-      { autor: idUsuario, destinatario: idOtroUsuario },
-      { autor: idOtroUsuario, destinatario: idUsuario }
-    ]
-  }).sort({ fechaEnvio: 1 }).limit(100);
+async function obtenerGlobal() {
+  // Se consulta en orden inverso para aprovechar el indice y se devuelve
+  // cronologicamente, como debe mostrarse en la interfaz.
+  const mensajes = await MensajeChat.find({ destinatario: { $exists: false } })
+    .sort({ fechaEnvio: -1 })
+    .limit(200);
+  return mensajes.reverse();
 }
 
-module.exports = { enviar, conversacion };
+module.exports = { enviarGlobal, obtenerGlobal };
