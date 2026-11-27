@@ -49,4 +49,29 @@ async function login({ email, password }) {
   };
 }
 
-module.exports = { register, login, publicUser };
+async function renovarSesion(tokenRenovacion) {
+  let datos;
+  try {
+    datos = jwt.verify(tokenRenovacion, jwtRefreshSecret, {
+      issuer: jwtIssuer,
+      audience: jwtAudience
+    });
+  } catch (_) {
+    throw new AppError(401, 'La sesion ha expirado. Inicia sesion nuevamente');
+  }
+  if (datos.tipo !== 'refresh') {
+    throw new AppError(401, 'Token de renovacion invalido');
+  }
+
+  const user = await Usuario.findById(datos.sub);
+  if (!user || user.estado !== 'ACTIVO') {
+    throw new AppError(401, 'Usuario no valido');
+  }
+  return {
+    tokenAcceso: createAccessToken(user),
+    tokenRenovacion: createRefreshToken(user),
+    user: publicUser(user)
+  };
+}
+
+module.exports = { register, login, renovarSesion, publicUser };

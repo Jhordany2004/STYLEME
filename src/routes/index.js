@@ -13,6 +13,7 @@ const { authenticate, authorize } = require('../compartido/middlewares/auth');
 
 router.post('/autenticacion/registrar', auth.register);
 router.post('/autenticacion/iniciar-sesion', auth.login);
+router.post('/autenticacion/renovar-sesion', auth.renovarSesion);
 router.get('/usuarios/mi-perfil', authenticate, auth.profile);
 router.get('/usuarios', authenticate, usuarios.listarParaChat);
 
